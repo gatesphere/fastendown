@@ -12,7 +12,7 @@
 <vnodes>
 <v t="peckj.20130212140318.1379"><vh>@file README.md</vh></v>
 <v t="peckj.20130212140318.1380" a="E"
-expanded="peckj.20130212140318.1382,"><vh>@file fastendown.lsp</vh></v>
+expanded="peckj.20130212140318.1382,peckj.20130212140318.1384,peckj.20130212140318.1383,"><vh>@file fastendown.lsp</vh></v>
 </vnodes>
 <tnodes>
 </tnodes>

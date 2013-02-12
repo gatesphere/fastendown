@@ -47,12 +47,15 @@
 (define (Stack:length)
   (length (self 1)))
 
+;@+others
+;@+node:peckj.20130212140318.1386: *4* predicates
 (define (Stack:moveagain?)
   (and (>= (length (self 1)) 2)
        (= ((self 1) 0) ((self 1) 1))))
 
 (define (Stack:validmove?)
   (member '(Piece W) (self 1)))
+;@-others
 ;@+node:peckj.20130212140318.1383: *3* board
 ; board class is a list of the format (Board (Stack1 Stack2 ... Stack9))
 (new Class 'Board)
@@ -65,6 +68,21 @@
     (print $idx ": ")
     (:print stack)))
 
+;@+others
+;@+node:peckj.20130212140318.1388: *4* predicates + queries
+(define (Board:validmove? (stack 0))
+  (:validmove? ((self 1) stack)))
+  
+(define (Board:validmoves)
+  (let ((l '()))
+    (dolist (stack (self 1))
+      (if (:validmove? stack)
+        (setq l (push $idx l))))
+    l))
+
+(define (Board:gameover?)
+  (= 0 (length (self 1))))
+;@+node:peckj.20130212140318.1387: *4* makemove
 ; move procedure:
 ; make new board with 1 fewer stack
 ; distribute pieces on stacks sequentially
@@ -80,19 +98,7 @@
       (if (>= idx (length (b 1))) (setq idx 0))
       (:push ((b 1) idx) (:pop s)))
     (list b (:moveagain? ((b 1) idx)))))
-
-(define (Board:validmove? (stack 0))
-  (:validmove? ((self 1) stack)))
-  
-(define (Board:validmoves)
-  (let ((l '()))
-    (dolist (stack (self 1))
-      (if (:validmove? stack)
-        (setq l (push $idx l))))
-    l))
-
-(define (Board:gameover?)
-  (= 0 (length (self 1))))
+;@-others
 ;@+node:peckj.20130212140318.1385: *3* piece
 (new Class 'Piece)
 
