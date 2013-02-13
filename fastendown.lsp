@@ -11,7 +11,7 @@
 ;; fastendown
 ;; an AI for Button Up!
 ;; Jacob Peck
-;; 20130212
+;; 20130213
 ;; https://github.com/gatesphere/fastendown
 ;;
 
