@@ -81,7 +81,15 @@
     l))
 
 (define (Board:gameover?)
-  (= 0 (length (self 1))))
+  (= 1 (length (self 1))))
+
+; + score -> red wins
+; - score -> black wins
+(define (Board:score)
+  (let ((s (reverse (((self 1) 0) 1))))
+    (setq red (apply '+ (map (fn (x) (+ 1 x)) (index (fn (x) (= '(Piece R) x)) s))))
+    (setq black (apply '+ (map (fn (x) (+ 1 x)) (index (fn (x) (= '(Piece B) x)) s))))
+    (- red black)))
 ;@+node:peckj.20130212140318.1387: *4* makemove
 ; move procedure:
 ; make new board with 1 fewer stack
@@ -107,32 +115,66 @@
 
 (define (Piece:print)
   (print (term (self 1)) " "))
+;@+node:peckj.20130213082445.1969: ** players
+;@+node:peckj.20130213082445.1970: *3* random player
+(new Class 'RandomPlayer)
+
+(define (RandomPlayer:RandomPlayer (color '(Piece R)))
+  (list RandomPlayer color))
+
+(define (RandomPlayer:print)
+  (println "RandomPlayer, color " (:print (self 1))))
+
+(define (RandomPlayer:makemove (board))
+  (let ((validmoves (:validmoves board)))
+    (setf move (rand (length validmoves)))
+    (println "Player (" (term ((self 1) 1)) ") making move: " (validmoves move))
+    (:makemove board (validmoves move))))
+;@+node:peckj.20130213082445.1971: ** game
+;@+node:peckj.20130213082445.1973: *3* random board
+(define (randomboard)
+  (let ((b '(
+             (Stack ((Piece R)))
+             (Stack ((Piece R)))
+             (Stack ((Piece R)))
+             (Stack ((Piece W)))
+             (Stack ((Piece W)))
+             (Stack ((Piece W)))
+             (Stack ((Piece B)))
+             (Stack ((Piece B)))
+             (Stack ((Piece B))))))
+  (setq *gameboard* (Board (randomize b true)))))
+
+    
+;@+node:peckj.20130213082445.1974: *3* swap turns
+(define (swapturns)
+  (reverse *currentturn*))
+;@+node:peckj.20130213082445.1976: *3* init game
+(define (init-game)
+  (seed (time-of-day))
+  (setq *gameboard* (randomboard))
+  (setq *player1* (RandomPlayer '(Piece R)))
+  (setq *player2* (RandomPlayer '(Piece B)))
+  (setq *currentturn* (list *player1* *player2*)))
+;@+node:peckj.20130213082445.1972: *3* game loop
+(define (game-loop)
+  (until (:gameover? *gameboard*)
+    (:print *gameboard*)
+    (make-a-move))
+  (:print *gameboard*)
+  (println "Final score: " (:score *gameboard*)))
+
+  
+;@+node:peckj.20130213082445.1975: *3* make a move
+(define (make-a-move)
+  (let ((p (*currentturn* 0)))
+    (setq retval (:makemove p *gameboard*))
+    (setq *gameboard* (retval 0))
+    (if (not (retval 1)) (swapturns))))
 ;@-others
 
-;; driver code
-(setq test-board 
-  (Board '(
-    (Stack ((Piece W)))
-    (Stack ((Piece R)))
-    (Stack ((Piece R)))
-    (Stack ((Piece B)))
-    (Stack ((Piece R)))
-    (Stack ((Piece W)))
-    (Stack ((Piece W)))
-    (Stack ((Piece B)))
-    (Stack ((Piece B))))))
-
-(setq moveagain nil)
-
-(define (makemove (stack))
-  (let ((x (:makemove test-board stack)))
-    (setq test-board (x 0))
-    (setq moveagain (x 1))))
-
-(:print test-board)
-
-(println "Valid moves: " (:validmoves test-board))
-
+(init-game)
+(game-loop)
 
 (exit)
 ;@-leo
