@@ -127,9 +127,31 @@
 
 (define (RandomPlayer:makemove (board))
   (let ((validmoves (:validmoves board)))
-    (setf move (rand (length validmoves)))
+    (setq move (rand (length validmoves)))
     (println "Player (" (term ((self 1) 1)) ") making move: " (validmoves move))
     (:makemove board (validmoves move))))
+;@+node:peckj.20130213082445.1977: *3* human player
+(new Class 'HumanPlayer)
+
+(define (HumanPlayer:HumanPlayer (color '(Piece R)))
+  (list HumanPlayer color))
+
+(define (HumanPlayer:print)
+  (println "HumanPlayer, color " (:print (self 1))))
+
+(define (HumanPlayer:makemove (board))
+  (let ((validmoves (:validmoves board)))
+    (setq move nil)
+    (while (= nil move)
+      (println "Valid moves are: " validmoves)
+      (print "Please enter your move: ")
+      (setq move (int (read-line)))
+      (if (not (member move validmoves))
+        (let ()
+          (println "That move is invalid!")
+          (setq move nil))))
+    (println "Player (" (term ((self 1) 1)) ") making move: " move)
+    (:makemove board move)))
 ;@+node:peckj.20130213082445.1971: ** game
 ;@+node:peckj.20130213082445.1973: *3* random board
 (define (randomboard)
@@ -153,7 +175,7 @@
 (define (init-game)
   (seed (time-of-day))
   (setq *gameboard* (randomboard))
-  (setq *player1* (RandomPlayer '(Piece R)))
+  (setq *player1* (HumanPlayer '(Piece R)))
   (setq *player2* (RandomPlayer '(Piece B)))
   (setq *currentturn* (list *player1* *player2*)))
 ;@+node:peckj.20130213082445.1972: *3* game loop
