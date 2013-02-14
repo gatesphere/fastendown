@@ -48,6 +48,7 @@
   (length (self 1)))
   
 (define (Stack:clone)
+  (setq a (list Stack (self 1)))
   (list Stack (self 1)))
 
 ;@+others
@@ -74,7 +75,7 @@
 (define (Board:clone)
   (let ((l '()))
     (dolist (s (self 1))
-      (append l (:clone s)))
+      (setq l (append l (list (:clone s)))))
     (list Board l)))
 
 ;@+others
@@ -109,7 +110,6 @@
         (b2 ((+ 1 stack) (self 1)))
         (s ((self 1) stack))
         (b (Board (append b1 b2))))
-    (setq b (:clone b))
     (setq idx (- stack 1))
     (dotimes (n (:length s))
       (inc idx)
@@ -161,7 +161,7 @@
       (let ((score 0))
         (dolist (m (:validmoves board))
           (let ((b (:makemove board m)))
-            (setq x (MinimaxPlayer:findmove (b 0) (if (b 1) maximizing (not maximizing))))
+            (setq x (MinimaxPlayer:findmove (:clone (b 0)) (if (b 1) maximizing (not maximizing))))
             (if (or (and maximizing (> x score)) (and (not maximizing) (< x score)))
               (setq score x))))
          score))))
@@ -225,8 +225,8 @@
   (seed (time-of-day))
   (setq *gameboard* (randomboard))
   (setq *player1* (HumanPlayer '(Piece R)))
-  (setq *player2* (RandomPlayer '(Piece B)))
-  ;(setq *player2* (MinimaxPlayer '(Piece B)))
+  ;(setq *player2* (RandomPlayer '(Piece B)))
+  (setq *player2* (MinimaxPlayer '(Piece B)))
   (setq *currentturn* (list *player1* *player2*)))
 ;@+node:peckj.20130213082445.1972: *3* game loop
 (define (game-loop)
@@ -241,7 +241,7 @@
 (define (make-a-move)
   (let ((p (*currentturn* 0)))
     (:print p)
-    (setq retval (:makemove p *gameboard*))
+    (setq retval (:makemove p (:clone *gameboard*)))
     (setq *gameboard* (retval 0))
     (if (not (retval 1)) (swapturns))))
 ;@-others
