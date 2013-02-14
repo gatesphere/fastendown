@@ -197,6 +197,7 @@
       ;(println "m: " m " s: " s)
       (if (or (and maximizing (> s score)) (and (not maximizing) (< s score))) 
         (let () (setq move m) (setq score s))))
+    (println "Player (" (term ((self 1) 1)) ") making move: " move)
     (:makemove board move)))
 ;@-others
 ;@+node:peckj.20130213082445.1977: *3* human player
