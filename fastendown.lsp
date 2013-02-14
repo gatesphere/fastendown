@@ -109,7 +109,8 @@
          (b2 ((+ 1 stack) (self 1)))
          (s ((self 1) stack))
          (l (append b1 b2))
-         (l2 '()))
+         (l2 '())
+         (b '()))
     (dolist (x l)
       (setq l2 (append l2 (list (:clone x)))))
     (setq b (Board l2))
@@ -154,20 +155,35 @@
 
 ;@+others
 ;@+node:peckj.20130214101432.1392: *4* findmove
-(define (MinimaxPlayer:findmove (board) (move) (maximizing))
-  (println "in findmove")
+(define (MinimaxPlayer:findmove (board) (move) (maximizing) (depth 0))
+  ;(println "in findmove: " move )
   (let ((b (:makemove board move)))
-    (println (:validmoves (b 0)))
+    ;(println b)
+    ;(:print (b 0))
+    ;(println "game over? " (:gameover? (b 0)))
     (if (:gameover? (b 0))
       ; if game is over, return score
-      (:score board)
+      ;(println (:score (b 0)))
+      (:score (b 0))
       ; else, return minimaxed score
       (let ((score 0))
         (dolist (m (:validmoves (b 0)))
           (let ()
-            (setq x (MinimaxPlayer:findmove (:clone (b 0)) m (if (b 1) maximizing (not maximizing))))
-            (if (or (and maximizing (> x score)) (and (not maximizing) (< x score)))
-              (setq score x))))
+            (setq x 
+              (MinimaxPlayer:findmove 
+                (:clone (b 0)) 
+                m 
+                (if (b 1) maximizing (not maximizing)) 
+                (+ 1 depth)))
+            ;(println "winding up... " x " " maximizing " " score " " depth)
+            (if (or 
+                  (and maximizing (> x score)) 
+                  (and (not maximizing) (< x score)))
+              (let ()
+                (setq score x)
+                ;(println "score set: " score)
+                ;(println b)
+                ))))
          score))))
 ;@+node:peckj.20130214101432.1393: *4* makemove
 (define (MinimaxPlayer:makemove (board))
@@ -175,10 +191,10 @@
     (setq move (validmoves 0)) ; default move to make
     (setq maximizing (= (self 1) '(Piece R)))
     (setq score 0)
-    (println "move: " move " maximizing: " maximizing " score: " score)
+    ;(println "move: " move " maximizing: " maximizing " score: " score)
     (dolist (m validmoves)
       (setq s (MinimaxPlayer:findmove board m maximizing))
-      (println "m: " m " s: " s)
+      ;(println "m: " m " s: " s)
       (if (or (and maximizing (> s score)) (and (not maximizing) (< s score))) 
         (let () (setq move m) (setq score s))))
     (:makemove board move)))
