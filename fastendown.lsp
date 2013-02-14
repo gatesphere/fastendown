@@ -105,11 +105,14 @@
 ; make new board with 1 fewer stack
 ; distribute pieces on stacks sequentially
 (define (Board:makemove (stack 0))
-  (letn (
-        (b1 (0 stack (self 1)))
-        (b2 ((+ 1 stack) (self 1)))
-        (s ((self 1) stack))
-        (b (Board (append b1 b2))))
+  (letn ((b1 (0 stack (self 1)))
+         (b2 ((+ 1 stack) (self 1)))
+         (s ((self 1) stack))
+         (l (append b1 b2))
+         (l2 '()))
+    (dolist (x l)
+      (setq l2 (append l2 (list (:clone x)))))
+    (setq b (Board l2))
     (setq idx (- stack 1))
     (dotimes (n (:length s))
       (inc idx)
@@ -154,14 +157,15 @@
 (define (MinimaxPlayer:findmove (board) (move) (maximizing))
   (println "in findmove")
   (let ((b (:makemove board move)))
+    (println (:validmoves (b 0)))
     (if (:gameover? (b 0))
       ; if game is over, return score
       (:score board)
       ; else, return minimaxed score
       (let ((score 0))
-        (dolist (m (:validmoves board))
-          (let ((b (:makemove board m)))
-            (setq x (MinimaxPlayer:findmove (:clone (b 0)) (if (b 1) maximizing (not maximizing))))
+        (dolist (m (:validmoves (b 0)))
+          (let ()
+            (setq x (MinimaxPlayer:findmove (:clone (b 0)) m (if (b 1) maximizing (not maximizing))))
             (if (or (and maximizing (> x score)) (and (not maximizing) (< x score)))
               (setq score x))))
          score))))
