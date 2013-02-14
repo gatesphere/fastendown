@@ -46,6 +46,9 @@
 
 (define (Stack:length)
   (length (self 1)))
+  
+(define (Stack:clone)
+  (list Stack (self 1)))
 
 ;@+others
 ;@+node:peckj.20130212140318.1386: *4* predicates
@@ -67,6 +70,12 @@
   (dolist (stack (self 1))
     (print $idx ": ")
     (:print stack)))
+
+(define (Board:clone)
+  (let ((l '()))
+    (dolist (s (self 1))
+      (append l (:clone s)))
+    (list Board l)))
 
 ;@+others
 ;@+node:peckj.20130212140318.1388: *4* predicates + queries
@@ -100,6 +109,7 @@
         (b2 ((+ 1 stack) (self 1)))
         (s ((self 1) stack))
         (b (Board (append b1 b2))))
+    (setq b (:clone b))
     (setq idx (- stack 1))
     (dotimes (n (:length s))
       (inc idx)
@@ -130,6 +140,45 @@
     (setq move (rand (length validmoves)))
     (println "Player (" (term ((self 1) 1)) ") making move: " (validmoves move))
     (:makemove board (validmoves move))))
+;@+node:peckj.20130214101432.1390: *3* minimax player
+(new Class 'MinimaxPlayer)
+
+(define (MinimaxPlayer:MinimaxPlayer (color '(Piece R)))
+  (list MinimaxPlayer color))
+
+(define (MinimaxPlayer:print)
+  (println "MinimaxPlayer, color " (:print (self 1))))
+
+;@+others
+;@+node:peckj.20130214101432.1392: *4* findmove
+(define (MinimaxPlayer:findmove (board) (move) (maximizing))
+  (println "in findmove")
+  (let ((b (:makemove board move)))
+    (if (:gameover? (b 0))
+      ; if game is over, return score
+      (:score board)
+      ; else, return minimaxed score
+      (let ((score 0))
+        (dolist (m (:validmoves board))
+          (let ((b (:makemove board m)))
+            (setq x (MinimaxPlayer:findmove (b 0) (if (b 1) maximizing (not maximizing))))
+            (if (or (and maximizing (> x score)) (and (not maximizing) (< x score)))
+              (setq score x))))
+         score))))
+;@+node:peckj.20130214101432.1393: *4* makemove
+(define (MinimaxPlayer:makemove (board))
+  (let ((validmoves (:validmoves board)))
+    (setq move (validmoves 0)) ; default move to make
+    (setq maximizing (= (self 1) '(Piece R)))
+    (setq score 0)
+    (println "move: " move " maximizing: " maximizing " score: " score)
+    (dolist (m validmoves)
+      (setq s (MinimaxPlayer:findmove board m maximizing))
+      (println "m: " m " s: " s)
+      (if (or (and maximizing (> s score)) (and (not maximizing) (< s score))) 
+        (let () (setq move m) (setq score s))))
+    (:makemove board move)))
+;@-others
 ;@+node:peckj.20130213082445.1977: *3* human player
 (new Class 'HumanPlayer)
 
@@ -177,6 +226,7 @@
   (setq *gameboard* (randomboard))
   (setq *player1* (HumanPlayer '(Piece R)))
   (setq *player2* (RandomPlayer '(Piece B)))
+  ;(setq *player2* (MinimaxPlayer '(Piece B)))
   (setq *currentturn* (list *player1* *player2*)))
 ;@+node:peckj.20130213082445.1972: *3* game loop
 (define (game-loop)
@@ -190,6 +240,7 @@
 ;@+node:peckj.20130213082445.1975: *3* make a move
 (define (make-a-move)
   (let ((p (*currentturn* 0)))
+    (:print p)
     (setq retval (:makemove p *gameboard*))
     (setq *gameboard* (retval 0))
     (if (not (retval 1)) (swapturns))))
