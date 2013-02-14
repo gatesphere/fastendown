@@ -240,7 +240,6 @@
 ;@+node:peckj.20130214101432.1395: *3* custom board
 (define (customboard (b))
   (let ((in (eval-string b)))
-    (println in)
     (setq stks '())
     (dolist (s in)
       (setq currstk '())
