@@ -10,7 +10,8 @@
 <preferences/>
 <find_panel_settings/>
 <vnodes>
-<v t="peckj.20130212140318.1379"><vh>@file README.md</vh></v>
+<v t="peckj.20130212140318.1379" a="E"><vh>@file README.md</vh></v>
+<v t="peckj.20130215091009.1411"><vh>@edit license/license.txt</vh></v>
 <v t="peckj.20130212140318.1380" a="E"
 expanded="peckj.20130212140318.1382,peckj.20130212140318.1384,peckj.20130212140318.1383,peckj.20130213082445.1969,peckj.20130214101432.1390,peckj.20130213082445.1971,"><vh>@file fastendown.lsp</vh></v>
 </vnodes>
