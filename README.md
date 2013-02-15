@@ -15,7 +15,7 @@ Overview
 Button Up! is an abstract strategy game with a limited search space, but interesting mechanics.
 Rules for Button Up! can be read [here][1].
   
-FastenDown is a minimaxing player for Button Up!, written in [newLisp][1], that searches the 
+FastenDown is a minimaxing player for Button Up!, written in [newLisp][2], that searches the 
 entire statespace before determining a move.  This is possible in a reasonable amount of time 
 because a single round of Button Up! is guaranteed to last only nine moves, and each possible game state is guaranteed to have at most three possible moves to consider, with the last move having at most two legal moves.  Draws are possible, but extremely rare.  Initial board layout is random at 
 the beginning of each round.
