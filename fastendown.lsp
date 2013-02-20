@@ -120,8 +120,8 @@
     (setq idx (- stack 1))
     (dotimes (n (:length s))
       (if (< n (length (b 1)))
-        (inc idx)
-        (if (>= idx (length (b 1))) (setq idx 0)))
+        (inc idx))
+      (if (>= idx (length (b 1))) (setq idx 0))
       (:push ((b 1) idx) (:pop s)))
     
     ; return a list of the new board + moveagain state
