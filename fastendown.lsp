@@ -111,14 +111,20 @@
          (l (append b1 b2))
          (l2 '())
          (b '()))
+    ; make a new board
     (dolist (x l)
       (setq l2 (append l2 (list (:clone x)))))
     (setq b (Board l2))
+    
+    ; drop a chip on each stack
     (setq idx (- stack 1))
     (dotimes (n (:length s))
-      (inc idx)
-      (if (>= idx (length (b 1))) (setq idx 0))
+      (if (< n (length (b 1)))
+        (inc idx)
+        (if (>= idx (length (b 1))) (setq idx 0)))
       (:push ((b 1) idx) (:pop s)))
+    
+    ; return a list of the new board + moveagain state
     (list b (:moveagain? ((b 1) idx)))))
 ;@-others
 ;@+node:peckj.20130212140318.1385: *3* piece
