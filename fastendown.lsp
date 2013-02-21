@@ -118,14 +118,16 @@
     
     ; drop a chip on each stack
     (setq idx (- stack 1))
+    (setq toomany false)
     (dotimes (n (:length s))
       (if (< n (length (b 1)))
-        (inc idx))
+        (inc idx)
+        (setq toomany true))
       (if (>= idx (length (b 1))) (setq idx 0))
       (:push ((b 1) idx) (:pop s)))
     
     ; return a list of the new board + moveagain state
-    (list b (:moveagain? ((b 1) idx)))))
+    (list b (and (not toomany) (:moveagain? ((b 1) idx))))))
 ;@-others
 ;@+node:peckj.20130212140318.1385: *3* piece
 (new Class 'Piece)
